@@ -1,0 +1,23 @@
+package com.company;
+
+/**
+ * Created by aashnashah on 12/26/14.
+ * Interface for a Person is implemented by all other classes
+ */
+public interface Person {
+
+    public void setName(String name);
+
+    public void setBirthdate(String info);
+
+    public String getName();
+
+    public String checkIN();
+
+    public String display();
+
+    public String checkOut();
+
+
+
+}
