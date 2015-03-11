@@ -1,0 +1,1241 @@
+/*
+Aashna Shah
+CSC 221 - Software Design Lab
+Fall 2014
+Final Project
+ */
+
+
+package com.company;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class Main {
+
+    static Intern[] database = new Intern[10];
+
+    public static void main(String[] args) throws IOException  {
+
+        //create personnel and add them to the initial database
+        Intern aashna = new Intern("Aashna", "10 Main Street", "1234", false, false);
+        Intern kia = new Intern("Kia" , "401 West 130th Street", "1235", true, false );
+        Intern allie = new Intern("Allie", "45 Bayside Boulevard", "1236", false, false);
+        Intern priyanka = new Intern("Priyanka", "97 Forest Hills", "1237", true, true);
+
+        StaffMember zeel = new StaffMember("Zeel", "28 1st Ave", "1238", false, false, 3, 1000);
+        StaffMember bonnie = new StaffMember("Bonnie", "36 East 2nd Ave", "1239", false, true, 2, 1100);
+        StaffMember deidra = new StaffMember("Deidra", "222 Bronx Borough", "1240", false, false, 1, 1300);
+        StaffMember mary = new StaffMember("Mary", "121 Brooklyn Street", "1241", false, true, 2, 1200 );
+
+        Manager joe = new Manager("Joe", "31 Downtown Circle", "1242", true, true, 4, 1500, 500);
+        Manager dan = new Manager("Dan", "56 5th Avenue ", "1243", false, true, 5, 2000, 700 );
+
+        addDatabase(aashna);
+        addDatabase(zeel);
+        addDatabase(kia);
+
+        addDatabase(allie);
+        addDatabase(priyanka);
+        addDatabase(bonnie);
+
+        addDatabase(deidra);
+        addDatabase(joe);
+        addDatabase(dan);
+
+        addDatabase(mary);
+
+        startWindow();
+    }
+    //------------------------------------------------------------------------------------
+    public static void startWindow()
+    {
+        // create initial window
+        final JFrame sFrame = new JFrame("Welcome");
+        JPanel startPan = new JPanel();
+        startPan.setLayout(new GridLayout(7,1));
+
+
+        JButton button1 = new JButton("Check In");
+        JButton button2 = new JButton("Check Out");
+        JButton button7 = new JButton("Exit");
+        final JButton button10 = new JButton("Administrator Access");
+
+        JLabel welcome = new JLabel("Welcome to the company database!");
+        JLabel instruction = new JLabel("Please select one of the following options: ");
+        JLabel space = new JLabel(" ");
+
+        startPan.add(welcome, BorderLayout.CENTER);
+        startPan.add(instruction);
+        startPan.add(button1);
+        startPan.add(button2);
+        startPan.add(button10);
+        startPan.add(space);
+        startPan.add(button7);
+
+
+
+        startPan.setPreferredSize(new Dimension(350, 250));
+        JPanel pan2 = new JPanel();
+        pan2.add(startPan);
+        sFrame.add(pan2);
+        sFrame.setSize(400,300);
+        sFrame.setVisible(true);
+
+//--------------------------------------------------------------------------------------------------
+        //Action Listener for button1 - Check In
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sFrame.dispose();
+
+                //create window to take in employee name
+                String name;
+                String fInfo;
+                JTextField nameField = new JTextField(15);
+                JPanel option3 = new JPanel();
+                option3.add(new JLabel("Employee Name: "));
+                option3.add(nameField);
+
+                int result = JOptionPane.showConfirmDialog(null, option3,
+                        "Please Enter Info", JOptionPane.OK_CANCEL_OPTION);
+
+                // display check-in output
+                if(result == JOptionPane.OK_OPTION)
+                {  name = nameField.getText();
+
+                    if(checkDatabase(name) != 51)
+                    {
+                        fInfo = database[checkDatabase(name)].checkIN();
+
+                        String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                        //Display check in successful
+                        int option = JOptionPane.showOptionDialog(null, fInfo, "Check In", JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+                        //go back to main window
+                        if(option==0)
+                        {startWindow();}
+                    }
+                    else
+                    {
+                        JLabel wrong = new JLabel("ERROR: This employee is not in our database");
+                        String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                        //Unsuccessful check in
+                        int option = JOptionPane.showOptionDialog(null, wrong, "Error", JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                        //go back to main window
+                        if(option==0)
+                        {startWindow();}
+                    }
+                }
+            }
+        });
+
+//--------------------------------------------------------------------------------------------------
+        //Action Listener for Button 2 - Check Out
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sFrame.dispose();
+
+                // create window for employee name
+                String name;
+                String fInfo;
+                JTextField nameField = new JTextField(15);
+                JPanel option3 = new JPanel();
+                option3.add(new JLabel("Employee Name: "));
+                option3.add(nameField);
+
+
+                int result = JOptionPane.showConfirmDialog(null, option3,
+                        "Please Enter Info", JOptionPane.OK_CANCEL_OPTION);
+
+                // display check out ouput
+                if(result == JOptionPane.OK_OPTION)
+                {  name = nameField.getText();
+
+                    if(checkDatabase(name) != 51)
+                    {
+                        if(database[checkDatabase(name)].isCheckedIn())
+                        {fInfo = database[checkDatabase(name)].checkOut();
+
+
+                            String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                            // display successful check out
+                            int option = JOptionPane.showOptionDialog(null, fInfo, "Check Out", JOptionPane.DEFAULT_OPTION,
+                                    JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                            //go back to main window
+                            if(option==0)
+                            {startWindow();}}
+                        else
+                        {
+                            JLabel wrong = new JLabel("ERROR: This employee is not checked in");
+                            String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                            //Unsuccessful check out
+                            int option = JOptionPane.showOptionDialog(null, wrong, "Error", JOptionPane.DEFAULT_OPTION,
+                                    JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                            //go back to main window
+                            if(option==0)
+                            {startWindow();}
+                        }
+                    }
+                    else {
+                        JLabel wrong = new JLabel("ERROR: This employee is not in our database");
+                        String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                        //Unsuccessful check out
+                        int option = JOptionPane.showOptionDialog(null, wrong, "Error", JOptionPane.DEFAULT_OPTION,
+                                JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                        //go back to main window
+                        if(option==0)
+                        {startWindow();}
+                    }
+                }
+            }
+        });
+
+        //--------------------------------------------------------------------------------
+        //action listener for button 7- exits the program
+        button7.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+        //----------------------------------------------------------------------------------------------------------
+        //action listener for button 10- only the administrator gets access to certain options such as handling employees
+        //in the database and viewing all the company information
+        button10.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sFrame.dispose();
+
+                //create window to take in administrator access code and allow them to pick one of the options
+
+                final JFrame frame2 = new JFrame("Administrator Access");
+                JPanel pan2 = new JPanel();
+                pan2.setLayout(new GridLayout(10,1));
+
+                JLabel instruction = new JLabel("Please enter a valid Administrator code and " +
+                        "select one of the following options");
+                final JTextField code = new JTextField(7);
+
+
+                JButton button3 = new JButton("Display existing employee's information");
+                JButton button4 = new JButton("Modify Existing Employee's Information");
+                JButton button5 = new JButton("Add new employee");
+                JButton button6 = new JButton("Delete Employee");
+                JButton button8 = new JButton("Display information for ALL employees");
+                JButton button9 = new JButton("Save all database information to a file");
+                JLabel space = new JLabel(" ");
+                JButton button11 = new JButton("Back to Main Window");
+
+                pan2.add(instruction);
+                pan2.add(code);
+                pan2.add(button3);
+                pan2.add(button4);
+                pan2.add(button5);
+                pan2.add(button6);
+                pan2.add(button8);
+                pan2.add(button9);
+                pan2.add(space);
+                pan2.add(button11);
+
+
+                pan2.setPreferredSize(new Dimension(500, 300));
+
+                JPanel pan3 = new JPanel();
+                pan3.add(pan2);
+                frame2.add(pan3);
+                frame2.setSize(550,350);
+                frame2.setVisible(true);
+//---------------------------------------------------------------------------------------------
+// action listener for button 3 - Display existing employee information
+                button3.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        frame2.dispose();
+
+                        if(!code.getText().equals(""))
+                        { int entered = Integer.parseInt(code.getText());
+
+                            if (entered % 2 == 0) {
+                                //window for user to input employee name
+                                String name;
+                                String fInfo;
+                                JTextField nameField = new JTextField(15);
+                                JPanel option3 = new JPanel();
+                                option3.add(new JLabel("Employee Name: "));
+                                option3.add(nameField);
+
+                                int result = JOptionPane.showConfirmDialog(null, option3,
+                                        "Employee Name", JOptionPane.OK_CANCEL_OPTION);
+
+                                //display employee information
+                                if (result == JOptionPane.OK_OPTION) {
+                                    name = nameField.getText();
+
+                                    if (checkDatabase(name) != 51) {
+                                        fInfo = database[checkDatabase(name)].display();
+
+                                        String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                        // display successful check out
+                                        int option = JOptionPane.showOptionDialog(null, fInfo, "Employee Information",
+                                                JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                                                null, options, options[1]);
+
+                                        //go back to main window
+                                        if (option == 0) {
+                                            startWindow();
+                                        }
+                                    } else {
+                                        JLabel wrong = new JLabel("ERROR: This employee is not in our database");
+                                        String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                        //Unsuccessful display information
+                                        int option = JOptionPane.showOptionDialog(null, wrong, "Error", JOptionPane.DEFAULT_OPTION,
+                                                JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                                        //go back to main window
+                                        if (option == 0) {
+                                            startWindow();
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {pErr(); }
+                        }
+                        else
+                        {pErr();}
+                    }
+                });
+//---------------------------------------------------------------------------------------------
+                //Action Listener for button 4- change existing employee information
+                button4.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        frame2.dispose();
+
+                        if(!code.getText().equals(""))
+
+                        {
+                            int entered = Integer.parseInt(code.getText());
+
+                            if (entered % 2 == 0) {
+
+                                //window for user to enter employee ID number and select a change
+                                JLabel instruction = new JLabel("Please enter your ID number and " +
+                                        "select one of the following modifications");
+                                final JTextField idnum = new JTextField(10);
+                                String[] modify = {"Change Name", "Change Address", "Change Marriage Status",
+                                        "Change Parenthood Status", "Update Employee Status"};
+
+                                JComboBox box = new JComboBox(modify);
+
+                                Component[] choices = {instruction, idnum, box};
+                                int chosen = JOptionPane.showConfirmDialog(null, choices, "Select Change",
+                                        JOptionPane.OK_CANCEL_OPTION);
+
+                                if (chosen == JOptionPane.OK_OPTION) {
+                                    String changeC = (String) box.getSelectedItem();
+                                    String numE = idnum.getText();
+
+                                    if (checkID(numE) != 51) {
+
+                                        // to change the name of the employee
+                                        if (changeC.equals("Change Name")) {
+                                            String name;
+                                            String fInfo;
+                                            JTextField nameField = new JTextField(15);
+                                            JPanel option3 = new JPanel();
+                                            option3.add(new JLabel("Enter new name: "));
+                                            option3.add(nameField);
+
+
+                                            int result = JOptionPane.showConfirmDialog(null, option3,
+                                                    "Please Enter Info", JOptionPane.OK_CANCEL_OPTION);
+
+                                            if (result == JOptionPane.OK_OPTION) {
+                                                name = nameField.getText();
+
+                                                database[checkID(numE)].setName(name);
+                                                fInfo = "Employee information successfully updated \n \n" +
+                                                        database[checkID(numE)].display();
+                                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                                // display successful update
+                                                int option = JOptionPane.showOptionDialog(null, fInfo, "Update Successful",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                                                //go back to main window
+                                                if (option == 0) {
+                                                    startWindow();
+                                                }
+                                            }
+                                        }
+                                        //to change the address of the employee
+                                        else if (changeC.equals("Change Address")) {
+
+                                            String name;
+                                            String fInfo;
+                                            JTextField nameField = new JTextField(15);
+                                            JPanel option3 = new JPanel();
+                                            option3.add(new JLabel("Enter new address: "));
+                                            option3.add(nameField);
+
+
+                                            int result = JOptionPane.showConfirmDialog(null, option3,
+                                                    "Please Enter Info", JOptionPane.OK_CANCEL_OPTION);
+
+                                            if (result == JOptionPane.OK_OPTION) {
+                                                name = nameField.getText();
+
+                                                database[checkID(numE)].setAddress(name);
+                                                fInfo = "Employee information successfully updated \n \n" +
+                                                        database[checkID(numE)].display();
+                                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                                // display successful update
+                                                int option = JOptionPane.showOptionDialog(null, fInfo, "Update Successful",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                                                //go back to main window
+                                                if (option == 0) {
+                                                    startWindow();
+                                                }
+                                            }
+                                        }
+                                        //to change the marital status of the employee
+                                        else if (changeC.equals("Change Marriage Status")) {
+                                            String name;
+                                            String fInfo;
+                                            JTextField nameField = new JTextField(15);
+                                            JPanel option3 = new JPanel();
+                                            option3.add(new JLabel("Marriage Status (Yes or No): "));
+                                            option3.add(nameField);
+
+
+                                            int result = JOptionPane.showConfirmDialog(null, option3,
+                                                    "Please Enter Info", JOptionPane.OK_CANCEL_OPTION);
+
+                                            if (result == JOptionPane.OK_OPTION) {
+                                                name = nameField.getText();
+
+                                                Boolean married = false;
+                                                if (name.equals("yes")) {
+                                                    married = true;
+                                                }
+
+                                                database[checkID(numE)].setSpouse(married);
+                                                fInfo = "Employee information successfully updated \n \n" +
+                                                        database[checkID(numE)].display();
+                                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                                // display successful update
+                                                int option = JOptionPane.showOptionDialog(null, fInfo, "Update Successful",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                                                //go back to main window
+                                                if (option == 0) {
+                                                    startWindow();
+                                                }
+                                            }
+                                        }
+                                        //to change the parenthood status of the employee
+                                        else if (changeC.equals("Change Parenthood Status")) {
+                                            String name;
+                                            String fInfo;
+                                            JTextField nameField = new JTextField(15);
+                                            JPanel option3 = new JPanel();
+                                            option3.add(new JLabel("Has Kids (Yes or No): "));
+                                            option3.add(nameField);
+
+
+                                            int result = JOptionPane.showConfirmDialog(null, option3,
+                                                    "Please Enter Info", JOptionPane.OK_CANCEL_OPTION);
+
+                                            if (result == JOptionPane.OK_OPTION) {
+                                                name = nameField.getText();
+
+                                                Boolean kids = false;
+                                                if (name.equals("yes")) {
+                                                    kids = true;
+                                                }
+
+                                                database[checkID(numE)].setKids(kids);
+                                                fInfo = "Employee information successfully updated \n \n" +
+                                                        database[checkID(numE)].display();
+                                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                                // display successful update
+                                                int option = JOptionPane.showOptionDialog(null, fInfo, "Update Successful",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                                                //go back to main window
+                                                if (option == 0) {
+                                                    startWindow();
+                                                }
+                                            }
+                                        }
+                                        //to update employee level
+                                        else if (changeC.equals("Update Employee Status")) {
+
+                                            if (database[checkID(numE)].getLevel() == 1) {
+                                                int index = checkID(numE);
+                                                JLabel instruction1 = new JLabel("Please enter the following information to update" +
+                                                        " this intern to a staff member: ");
+
+                                                JPanel modifyP = new JPanel();
+
+                                                JTextField salary = new JTextField();
+                                                JTextField weeks = new JTextField();
+
+                                                modifyP.add(new JLabel("Salary"));
+                                                modifyP.add(salary);
+                                                modifyP.add(new JLabel("Holiday Weeks;"));
+                                                modifyP.add(weeks);
+                                                modifyP.setLayout(new GridLayout(2, 2));
+
+                                                Component[] modC = {instruction1, modifyP};
+
+                                                int option = JOptionPane.showConfirmDialog(null, modC, "Update Level",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.INFORMATION_MESSAGE);
+
+                                                if (option == JOptionPane.OK_OPTION) {
+                                                    double time = 0;
+                                                    int money = 0;
+
+                                                    if (!salary.getText().equals("")) {
+                                                        money = Integer.parseInt(salary.getText());
+                                                    }
+                                                    if (!weeks.getText().equals("")) {
+                                                        time = Double.parseDouble(weeks.getText());
+                                                    }
+
+                                                    StaffMember again = new StaffMember(database[index].getName(),
+                                                            database[index].getAddress(),
+                                                            database[index].getId(), database[index].getSpouse(),
+                                                            database[index].getKids(), time, money);
+
+                                                    database[index] = again;
+
+                                                    String[] options = {"Back to Main Window", "Ok"};
+
+                                                    String display = "Employee " + database[index].getName() + " " +
+                                                            "has been successfully updated" +
+                                                            "\n \n" + database[index].display();
+
+
+                                                    int restart = JOptionPane.showOptionDialog(null, display,
+                                                            "Update Successful", JOptionPane.DEFAULT_OPTION,
+                                                            JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                                                    if (restart == 0) {
+                                                        startWindow();
+                                                    }
+                                                }
+
+                                            } else if (database[checkID(numE)].getLevel() == 2) {
+
+                                                int index = checkID(numE);
+                                                JLabel instruction1 = new JLabel("Please enter the following information to update" +
+                                                        " this staff member to a manager: ");
+
+                                                JPanel modifyP = new JPanel();
+
+                                                JTextField salary = new JTextField();
+                                                JTextField weeks = new JTextField();
+                                                JTextField bonus = new JTextField();
+
+                                                modifyP.add(new JLabel("Salary"));
+                                                modifyP.add(salary);
+                                                modifyP.add(new JLabel("Holiday Weeks;"));
+                                                modifyP.add(weeks);
+                                                modifyP.add(new JLabel("Yearly Bonus: "));
+                                                modifyP.add(bonus);
+                                                modifyP.setLayout(new GridLayout(3, 3));
+
+                                                Component[] modC = {instruction1, modifyP};
+
+                                                int option = JOptionPane.showConfirmDialog(null, modC,
+                                                        "Update Level", JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.INFORMATION_MESSAGE);
+
+                                                if (option == JOptionPane.OK_OPTION) {
+                                                    double time = 0;
+                                                    int money = 0;
+                                                    int extra = 0;
+
+                                                    if (!salary.getText().equals("")) {
+                                                        money = Integer.parseInt(salary.getText());
+                                                    }
+                                                    if (!weeks.getText().equals("")) {
+                                                        time = Double.parseDouble(weeks.getText());
+                                                    }
+                                                    if (!bonus.getText().equals("")) {
+                                                        extra = Integer.parseInt(bonus.getText());
+                                                    }
+
+                                                    Manager again = new Manager(database[index].getName(),
+                                                            database[index].getAddress(),
+                                                            database[index].getId(), database[index].getSpouse(),
+                                                            database[index].getKids(), time, money, extra);
+
+                                                    database[index] = again;
+
+                                                    String[] options = {"Back to Main Window", "Ok"};
+
+                                                    String display = "Employee " + database[index].getName() +
+                                                            " has been successfully updated" +
+                                                            " \n \n" + database[index].display();
+
+
+                                                    int restart = JOptionPane.showOptionDialog(null, display,
+                                                            "Update Successful", JOptionPane.DEFAULT_OPTION,
+                                                            JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                                                    if (restart == 0) {
+                                                        startWindow();
+                                                    }
+                                                }
+
+
+                                            } else if (database[checkID(numE)].getLevel() == 3) {
+                                                JLabel wrong = new JLabel("Error: This employee is already a manager. ");
+                                                JLabel wrong2 = new JLabel(database[checkID(numE)].getName() +
+                                                        " cannot be further updated");
+
+                                                Component[] wrongs = {wrong, wrong2};
+                                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                                //Unsuccessful update
+                                                int option = JOptionPane.showOptionDialog(null, wrongs, "Error",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                                                //go back to main window
+                                                if (option == 0) {
+                                                    startWindow();
+                                                }
+                                            }
+                                        }
+                                    }
+                                    //display error if employee is not in database
+                                    else {
+                                        JLabel wrong = new JLabel("ERROR: An employee with this ID number is not in our database");
+                                        String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                        //Unsuccessful display information
+                                        int option = JOptionPane.showOptionDialog(null, wrong, "Error", JOptionPane.DEFAULT_OPTION,
+                                                JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                                        //go back to main window
+                                        if (option == 0) {
+                                            startWindow();
+                                        }
+                                    }
+                                }
+                            }
+                            else { pErr();}
+                        }
+                        else
+                        {pErr();}
+                    }
+
+                });
+
+
+//---------------------------------------------------------------------------------------------
+                //action listener for button 5 - to add new employee
+                button5.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) throws NumberFormatException{
+
+                        frame2.dispose();
+
+                        if(!code.getText().equals(""))
+                        { int entered = Integer.parseInt(code.getText());
+
+                            if(entered % 2 == 0) {
+                                //window for user to select what type of employee to add
+                                String[] levels = {"Intern", "Staff Member", "Manager"};
+
+                                JLabel select = new JLabel("Select the type of employee: ");
+
+                                JComboBox levelChoose = new JComboBox(levels);
+                                Component[] choices = {select, levelChoose};
+
+                                int chosen = JOptionPane.showConfirmDialog(null, choices, "Select Level",
+                                        JOptionPane.OK_CANCEL_OPTION);
+
+                                if (chosen == JOptionPane.OK_OPTION) {
+
+                                    String levelInput = (String) levelChoose.getSelectedItem();
+
+                                    JPanel myPanel = new JPanel();
+                                    JLabel instruction = new JLabel("Please enter the following information:");
+
+                                    JTextField nameField = new JTextField(5);
+                                    JTextField addressField = new JTextField(5);
+                                    JTextField IDField = new JTextField(5);
+                                    JCheckBox spouseC = new JCheckBox();
+                                    JCheckBox kidsC = new JCheckBox();
+
+                                    //if you want to add an intern (level1) to the database
+                                    if (levelInput.equals("Intern")) {
+                                        System.out.println(nameField.getText());
+
+                                        myPanel.add(new JLabel("Name"));
+                                        myPanel.add(nameField);
+                                        myPanel.add(new JLabel("Address:"));
+                                        myPanel.add(addressField);
+                                        myPanel.add(new JLabel("ID:"));
+                                        myPanel.add(IDField);
+                                        myPanel.add(new JLabel("Married:"));
+                                        myPanel.add(spouseC);
+                                        myPanel.add(new JLabel("Number of Kids:"));
+                                        myPanel.add(kidsC);
+                                        myPanel.setLayout(new GridLayout(5, 2));
+
+                                        Component[] stuff = {instruction, myPanel};
+
+                                        int result = JOptionPane.showConfirmDialog(null, stuff,
+                                                "Please Enter Info", JOptionPane.OK_CANCEL_OPTION);
+
+                                        if (result == JOptionPane.OK_OPTION) {
+
+                                            if (nameField.getText().equals("") || addressField.getText().equals("")
+                                                    || IDField.getText().equals("")) {
+                                                JLabel wrong = new JLabel("ERROR: The information entered is not valid");
+                                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                                //Employee not added
+                                                int option = JOptionPane.showOptionDialog(null, wrong, "Error",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                                                //go back to main window
+                                                if (option == 0) {
+                                                    startWindow();
+                                                }
+                                            } else {
+                                                String name = nameField.getText();
+
+                                                Boolean spouse = false;
+                                                Boolean kid = false;
+
+                                                if (spouseC.isSelected()) {
+                                                    spouse = true;
+                                                }
+                                                if (kidsC.isSelected()) {
+                                                    kid = true;
+                                                }
+                                                Intern np = new Intern(nameField.getText(), addressField.getText(),
+                                                        IDField.getText(), spouse, kid);
+
+                                                addDatabase(np);
+
+                                                //new employee successfully added
+                                                String[] options = {"Back to Main Window", "Ok"};
+                                                String display = "New employee successfully added! \n" +
+                                                        database[checkDatabase(name)].display();
+                                                int restart = JOptionPane.showOptionDialog(null, display, "Addition Successful",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                                                if (restart == 0) {
+                                                    startWindow();
+                                                }
+                                            }
+                                        }
+                                    }
+                                    //if the level of employee being added is a regular staff member
+                                    if (levelInput.equals("Staff Member")) {
+                                        JTextField holiday = new JTextField(5);
+                                        JTextField salary = new JTextField(5);
+
+                                        myPanel.add(new JLabel("Name"));
+                                        myPanel.add(nameField);
+                                        myPanel.add(new JLabel("Address:"));
+                                        myPanel.add(addressField);
+                                        myPanel.add(new JLabel("ID:"));
+                                        myPanel.add(IDField);
+                                        myPanel.add(new JLabel("Salary: "));
+                                        myPanel.add(salary);
+                                        myPanel.add(new JLabel("Weeks of Holiday"));
+                                        myPanel.add(holiday);
+                                        myPanel.add(new JLabel("Married:"));
+                                        myPanel.add(spouseC);
+                                        myPanel.add(new JLabel("Number of Kids:"));
+                                        myPanel.add(kidsC);
+                                        myPanel.setLayout(new GridLayout(7, 2));
+
+                                        Component[] stuff = {instruction, myPanel};
+
+                                        int result2 = JOptionPane.showConfirmDialog(null, stuff, "Please Enter Info",
+                                                JOptionPane.OK_CANCEL_OPTION);
+
+                                        if (result2 == JOptionPane.OK_OPTION) {
+
+                                            if (nameField.getText().equals("") || addressField.getText().equals("")
+                                                    || IDField.getText().equals("")) {
+                                                JLabel wrong = new JLabel("ERROR: The information entered is not valid");
+                                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                                //Employee not added
+                                                int option = JOptionPane.showOptionDialog(null, wrong, "Error", JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                                                //go back to main window
+                                                if (option == 0) {
+                                                    startWindow();
+                                                }
+                                            } else {
+                                                String name = nameField.getText();
+
+                                                Boolean spouse = false;
+                                                Boolean kid = false;
+
+                                                if (spouseC.isSelected()) {
+                                                    spouse = true;
+                                                }
+                                                if (kidsC.isSelected()) {
+                                                    kid = true;
+                                                }
+                                                //a try and catch block to handle NumberFormat Exception
+                                                // if user does not submit all necessary info
+                                                try {
+
+                                                    StaffMember np = new StaffMember(nameField.getText(), addressField.getText(),
+                                                            IDField.getText(), spouse, kid,
+                                                            Double.parseDouble(holiday.getText()), Integer.parseInt(salary.getText()));
+                                                    addDatabase(np);
+                                                } catch (NumberFormatException d) {
+                                                    int money = 0;
+                                                    double holidayT = 0;
+                                                    if (!holiday.getText().equals("")) {
+                                                        holidayT = Double.parseDouble(holiday.getText());
+                                                    }
+                                                    if (!salary.getText().equals("")) {
+                                                        money = Integer.parseInt(salary.getText());
+                                                    }
+
+                                                    StaffMember np = new StaffMember(nameField.getText(), addressField.getText(),
+                                                            IDField.getText(),
+                                                            spouse, kid, holidayT, money);
+                                                    addDatabase(np);
+
+
+                                                    System.err.println("Number Format Exception Handled");
+                                                }
+
+
+                                                //new employee successfully added
+                                                String[] options = {"Back to Main Window", "Ok"};
+                                                String display = "New employee successfully added! \n" +
+                                                        database[checkDatabase(name)].display();
+                                                int restart = JOptionPane.showOptionDialog(null, display, "Addition Successful",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                                                if (restart == 0) {
+                                                    startWindow();
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    //if the level of employee being added is a manager (level 3)
+                                    if (levelInput.equals("Manager")) {
+                                        JTextField holiday = new JTextField(5);
+                                        JTextField salary = new JTextField(5);
+                                        JTextField bonus = new JTextField(5);
+
+                                        myPanel.add(new JLabel("Name"));
+                                        myPanel.add(nameField);
+                                        myPanel.add(new JLabel("Address:"));
+                                        myPanel.add(addressField);
+                                        myPanel.add(new JLabel("ID:"));
+                                        myPanel.add(IDField);
+                                        myPanel.add(new JLabel("Salary: "));
+                                        myPanel.add(salary);
+                                        myPanel.add(new JLabel("Weeks of Holiday"));
+                                        myPanel.add(holiday);
+                                        myPanel.add(new JLabel("End of Year Bonus"));
+                                        myPanel.add(bonus);
+                                        myPanel.add(new JLabel("Married:"));
+                                        myPanel.add(spouseC);
+                                        myPanel.add(new JLabel("Number of Kids:"));
+                                        myPanel.add(kidsC);
+                                        myPanel.setLayout(new GridLayout(8, 2));
+
+                                        Component[] stuff = {instruction, myPanel};
+
+                                        int result2 = JOptionPane.showConfirmDialog(null, stuff, "Please Enter Info",
+                                                JOptionPane.OK_CANCEL_OPTION);
+
+                                        if (result2 == JOptionPane.OK_OPTION) {
+                                            if (nameField.getText().equals("") || addressField.getText().equals("")
+                                                    || IDField.getText().equals("")) {
+                                                JLabel wrong = new JLabel("ERROR: The information entered is not valid");
+                                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                                //Employee not added
+                                                int option = JOptionPane.showOptionDialog(null, wrong, "Error",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                                                //go back to main window
+                                                if (option == 0) {
+                                                    startWindow();
+                                                }
+                                            } else {
+                                                String name = nameField.getText();
+
+                                                Boolean spouse = false;
+                                                Boolean kid = false;
+
+                                                if (spouseC.isSelected()) {
+                                                    spouse = true;
+                                                }
+                                                if (kidsC.isSelected()) {
+                                                    kid = true;
+                                                }
+
+                                                //try and catch block to handle number format exception if user does not enter all necessary info
+                                                try {
+                                                    Manager np = new Manager(nameField.getText(), addressField.getText(),
+                                                            IDField.getText(), spouse, kid,
+                                                            Double.parseDouble(holiday.getText()), Integer.parseInt(salary.getText()),
+                                                            Integer.parseInt(bonus.getText()));
+
+                                                    addDatabase(np);
+                                                } catch (NumberFormatException f) {
+                                                    int money = 0;
+                                                    double holidayT = 0;
+                                                    int bonusT = 0;
+
+                                                    if (!salary.getText().equals("")) {
+                                                        money = Integer.parseInt(salary.getText());
+                                                    }
+                                                    if (!holiday.getText().equals("")) {
+                                                        holidayT = Double.parseDouble(salary.getText());
+                                                    }
+                                                    if (!bonus.getText().equals("")) {
+                                                        bonusT = Integer.parseInt(bonus.getText());
+                                                    }
+
+                                                    Manager np = new Manager(nameField.getText(), addressField.getText(),
+                                                            IDField.getText(), spouse, kid,
+                                                            holidayT, money, bonusT);
+                                                    addDatabase(np);
+                                                    System.err.println("Number Format Exception Handled");
+                                                }
+
+                                                //new employee successfully added
+                                                String[] options = {"Back to Main Window", "Ok"};
+                                                String display = "New employee successfully added! \n" +
+                                                        database[checkDatabase(name)].display();
+
+                                                int restart = JOptionPane.showOptionDialog(null, display,
+                                                        "Addition Successful",
+                                                        JOptionPane.DEFAULT_OPTION,
+                                                        JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                                                if (restart == 0) {
+                                                    startWindow();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {pErr();
+                            }}
+                        else
+                        {pErr();}
+
+
+                    }
+                });
+                //-----------------------------------------------------------------------------------------
+                //action listener for button 6- to delete employee from database
+                button6.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        frame2.dispose();
+
+                        if(!code.getText().equals("")) {
+                            int entered = Integer.parseInt(code.getText());
+
+                            if (entered % 2 == 0)
+
+                            {//create window for user to enter name
+                                String name;
+                                String fInfo;
+                                JTextField nameField = new JTextField(15);
+                                JPanel option3 = new JPanel();
+                                option3.add(new JLabel("Employee Name: "));
+                                option3.add(nameField);
+
+
+                                int result = JOptionPane.showConfirmDialog(null, option3,
+                                        "Please Enter Info", JOptionPane.OK_CANCEL_OPTION);
+
+                                if (result == JOptionPane.OK_OPTION) {
+                                    name = nameField.getText();
+                                    if (checkDatabase(name) != 51) {
+                                        fInfo = "Employee " + name + " has been removed";
+
+                                        int done = checkDatabase(name);
+                                        database[done] = null;
+
+                                        String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                        //Employee successfully removed from database
+                                        int option = JOptionPane.showOptionDialog(null, fInfo, "Employee removed",
+                                                JOptionPane.DEFAULT_OPTION,
+                                                JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+                                        //go back to main window
+                                        if (option == 0) {
+                                            startWindow();
+                                        }
+                                    } else {
+                                        //error - name not in database
+                                        JLabel wrong = new JLabel("ERROR: This employee is not in our database");
+                                        String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                        //Employee not in database
+                                        int option = JOptionPane.showOptionDialog(null, wrong, "Error",
+                                                JOptionPane.DEFAULT_OPTION,
+                                                JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                                        //go back to main window
+                                        if (option == 0) {
+                                            startWindow();
+                                        }
+                                    }
+
+                                }
+                            } else {
+                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                String message = "This is not a valid administrator access code";
+                                //Unsuccessful update
+                                int option = JOptionPane.showOptionDialog(null, message, "Error",
+                                        JOptionPane.DEFAULT_OPTION,
+                                        JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+                                //go back to main window
+                                if (option == 0) {
+                                    startWindow();
+                                }
+
+                            }
+                        }
+                        else{pErr();}
+                    }
+                });
+
+                //-----------------------------------------------------------------------------------
+                //actions listner for button 8 - dispaly information for ALL employees
+                button8.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        frame2.dispose();
+
+                        if(!code.getText().equals(""))
+                        { int entered = Integer.parseInt(code.getText());
+
+                            if(entered % 2 == 0)
+                            {
+                                String[] tList = new String[100];
+                                tList[0] = "Information for all the employees in the company:";
+                                tList[1] = "            ";
+
+                                for(int x = 0; x <database.length; x++)
+                                {
+                                    if(database[x] != null)
+                                    { tList[x+2] = database[x].display();}
+                                }
+
+                                JList<String> keep = new JList<String>(tList);
+
+                                JScrollPane three = new JScrollPane(keep);
+
+                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                //display information
+                                int option = JOptionPane.showOptionDialog(null,three, "Company Information",
+                                        JOptionPane.DEFAULT_OPTION,
+                                        JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+
+                                //go back to main window
+                                if(option==0)
+                                {startWindow();}}
+
+                            else
+                            {
+                                pErr();
+
+                            }}
+                        else
+                        {pErr();}
+
+                    }
+                });
+                //-------------------------------------------------------------------------------------------
+                button9.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        frame2.dispose();
+
+                        if (!code.getText().equals("")) {
+                            int entered = Integer.parseInt(code.getText());
+
+                            if (entered % 2 == 0) {
+                                String tList = "Information for all employees in database: \n";
+
+                                try {
+                                    for (int x = 0; x < database.length; x++) {
+                                        if (database[x] != null) {
+                                            tList += "\n \n" + database[x].display();
+                                        }
+                                    }
+                                    FileOutputStream fout = new FileOutputStream("output");
+
+                                    fout.write(tList.getBytes());
+                                } catch (IOException k) {
+                                    System.err.println("IO Exception handled");
+                                }
+
+                                String message = "The information has been saved to text file 'output'";
+                                String[] options = new String[]{"Back to Main Window", "Ok"};
+
+                                //display information
+                                int option = JOptionPane.showOptionDialog(null, message, "Company Information",
+                                        JOptionPane.DEFAULT_OPTION,
+                                        JOptionPane.INFORMATION_MESSAGE, null, options, options[1]);
+                                //go back to main window
+                                if (option == 0) {
+                                    startWindow();
+                                }
+                            }
+                            else {pErr();}
+                        }
+                        else
+                        {  pErr();}
+
+
+                    }
+                });
+
+                //---------------------------------------------------------------------------------
+                button11.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        frame2.dispose();
+                        startWindow();
+                    }
+                });}
+        });
+    }
+
+    //-----------------------------------------------------------------------------------------------------------
+    // method to print error window
+    public static void pErr()
+    { String[] options = new String[]{"Back to Main Window", "Ok"};
+
+        String message = "This is not a valid administrator access code";
+        //Unsuccessful update
+        int option = JOptionPane.showOptionDialog(null, message, "Error", JOptionPane.DEFAULT_OPTION,
+                JOptionPane.ERROR_MESSAGE, null, options, options[1]);
+        //go back to main window
+        if (option == 0) {
+            startWindow();}
+    }
+
+    //------------------------------------------------------------------------------------------------------------------------
+//method to add a new employee to the company database
+    public static void addDatabase(Intern add) throws ArrayIndexOutOfBoundsException
+    {
+        boolean added = false;
+        int x = 0;
+        // try and catch block to catch exception if database size is too small
+        try
+        {
+            while(added == false)
+            {
+                if(database[x] == null)
+                {   database[x] = add;
+                    added = true;
+                    break;}
+                else
+                {x++;
+                    added = false;}
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException exception)
+        {
+            Intern[] temp = new Intern[database.length*2];
+
+            int index = 0;
+            for(int y = 0; y < database.length; y++)
+            {
+                index = y;
+                temp[y] = database[y];
+            }
+
+            temp[index+1] = add;
+            database = temp;
+            System.err.println("Array Index Out of Bounds Exception handled");
+
+        }
+
+    }
+    //--------------------------------------------------------------------------------------
+    //method to check if the the person exists in the Database using the name
+    public static int checkDatabase(String name)
+    {
+        int exists = 51;
+        for(int x = 0; x < database.length; x++)
+        {
+            if(database[x] != null)
+            {if(name.equals(database[x].getName()))
+            {exists = x;
+                break;}}
+        }
+
+        return exists;
+    }
+
+    //--------------------------------------------------------------------------------------
+    //method to check if the person exists in the Database using the id number
+    public static int checkID(String id)
+    {
+        int exists = 51;
+        for(int x = 0; x < database.length; x++)
+        {
+            if(database[x] != null)
+            {if(id.equals(database[x].getId()))
+            {
+                exists = x;
+                break;
+            }}
+        }
+
+        return exists;
+    }
+}
