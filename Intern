@@ -1,0 +1,153 @@
+package com.company;
+import javax.swing.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+/**
+ * Created by aashnashah on 12/18/14.
+ */
+
+//this class represents a level one employee. It implements the Person interface
+// It is the most general and is the super class for all the other classes.
+public class Intern implements Person {
+
+
+    private String name;
+    private String address;
+    private String id;
+    private boolean spouse;
+    private boolean kids;
+    private boolean checkedIn = false;
+    private int level = 1;
+    private String birthdate;
+
+
+    //the constructor
+    public Intern(String newName, String newAddress, String newId, boolean statusS, boolean statusK)
+    {   name = newName;
+        address = newAddress;
+        id = newId;
+        spouse = statusS;
+        kids = statusK;
+    }
+    //------------------------------------------------------------------------------------------------
+    //this method returns the levels of the employee
+    public int getLevel()
+    {return level;}
+    //-------------------------------------------------------------------------------------------------
+    //set and get methods for name
+    public void setName(String newName)
+    {
+        name = newName;
+    }
+
+    public String getName() {return name;}
+
+    //----------------------------------------------------------------------------------------------
+    //set and get methods for address
+    public void setAddress(String newAddress)
+    {address = newAddress;}
+
+    public String getAddress()
+    {return address;}
+
+    //----------------------------------------------------------------------------------------------
+//set and get methods for id
+    public void setId(String newId)
+    { id = newId;}
+
+    public String getId()
+    {return id;}
+
+    //----------------------------------------------------------------------------------------------
+    //set and get methods for marital status
+    public void setSpouse(boolean status)
+    { spouse = status;}
+
+    public boolean getSpouse()
+    {
+        return spouse;
+    }
+    //----------------------------------------------------------------------------------------------
+    //set and get methods for parenthood status
+    public void setKids(boolean status)
+    { kids = status;}
+
+    public boolean getKids()
+    {
+        return kids;
+    }
+
+
+    //-----------------------------------------------------------------------------------------------
+    //method that displays all information for Intern
+    public String display() {
+
+        String married = " ";
+        String parent = " ";
+
+        if (spouse == false) {married = "No";}
+        else {  married = "Yes";}
+
+        if (kids == false) {parent = "No";}
+        else {parent = "Yes";}
+
+        String full = " Employee Status: Intern \n Name: " + name + "\n ID: " + id + "\n Address: " + address +
+                "\n Married: " + married + "\n Kids: " + parent;
+
+        return full;
+
+    }
+
+    public boolean isCheckedIn()
+    {
+        return checkedIn;
+    }
+    //-----------------------------------------------------------------------------------------------
+    //Method to check in
+    public String checkIN()
+    {
+
+        checkedIn = true;
+
+        Calendar cal = Calendar.getInstance();
+        Date cdate = new Date();
+
+        cal.getTime();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+        SimpleDateFormat date = new SimpleDateFormat("MM dd, yyyy");
+
+
+        String full = "Check in successful! \n" + "\n Employee: " + name + "\n Date: " + date.format(cdate.getTime()) +
+                "\n Time: " + sdf.format(cal.getTime());
+        return full;
+    }
+
+    //------------------------------------------------------------------------------------------------
+//method to check out
+    public String checkOut()
+    {
+
+        Calendar cal = Calendar.getInstance();
+        Date cdate = new Date();
+
+        cal.getTime();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+        SimpleDateFormat date = new SimpleDateFormat("MM dd, yyyy");
+
+
+        String full = "Check out successful! \n" + " \n Employee: " + name + " \n Date: " + date.format(cdate.getTime())
+                + "\n Time: " + sdf.format(cal.getTime());
+        return full;
+
+    }
+    //------------------------------------------------------------
+    //set and get methods for brithdate
+    public void setBirthdate(String info)
+    {birthdate = info;}
+
+    public String getBirthdate()
+    {return birthdate;}
+}
