@@ -1,0 +1,91 @@
+package com.company;
+
+/**
+ * Created by aashnashah on 12/18/14.
+ */
+
+//this method represents a staff member. It is a subclass for Intern and it also implements the Person interface
+public class StaffMember extends Intern implements Person {
+
+
+    public double holidayTime = 1;
+    public int  salary = 1000;
+    private int level = 2;
+
+
+    //constructor
+    public StaffMember(String newName, String newAddress, String newId, boolean statusS,
+                       boolean statusK, double holiday, int money)
+    {
+        super( newName, newAddress, newId,  statusS,statusK);
+        if(checkHoliday(holiday)) {holidayTime = holiday;}
+        if(checkSalary(money)) {salary = money;}
+    }
+    //----------------------------------------------------------------------------------------------
+    //overrides the super getLevel method
+    @Override
+    public int getLevel()
+    {return level;}
+
+    //----------------------------------------------------------------------------------------------
+    //set and get methods for holiday
+    public void setHoliday(double x)
+    {if(checkHoliday(x))
+    {holidayTime = x;}}
+
+    public double getHoliday()
+    {
+        return holidayTime;
+    }
+
+    //this method checks if the holiday time entered is valid for a staff member
+    public boolean checkHoliday(double x)
+    { boolean valid = false;
+        if(x >= 1 && x <=3)
+        {
+            valid = true;
+        }
+        return valid;
+    }
+    //-------------------------------------------------------------------------------
+    //set and get methods for Salary
+    public void setSalary(int x)
+    {   if(checkSalary(x))
+        salary = x;}
+
+    public int getSalary()
+    {return salary;}
+
+    //this method checks if the salary entered is valid for a staff member
+    public boolean checkSalary(int x)
+    { boolean valid = false;
+        if(x >= 1000 && x <=5000)
+        {
+            valid = true;
+        }
+        return valid;
+    }
+
+    //-----------------------------------------------------------------------------------
+//overrides the display method from the superclass
+    @Override
+    public String display() {
+
+        String married = " ";
+        String parent = " ";
+
+        if (getSpouse() == false) {married = "No";}
+        else {  married = "Yes";}
+
+        if (getKids() == false) {parent = "No";}
+        else {parent = "Yes";}
+
+        String full = " Employee Status: Staff Member \n Name: " + getName() + "\n ID: " + getId() + "\n Address: " + getAddress() +
+                "\n Salary: " + salary + "\n Holiday Time: " + holidayTime + " weeks " +
+                "\n Married: " + married + "\n Kids: " + parent;
+
+        return full;
+
+    }
+}
+
