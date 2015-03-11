@@ -1,0 +1,105 @@
+package com.company;
+
+/**
+ * Created by aashnashah on 12/18/14.
+ */
+
+//this is class represents a level 3 employee- a manager. An employee of this method cannot be further updated
+// It extends the intern superclass and implements the Person interface
+public class Manager extends Intern implements Person {
+
+
+    private int bonus = 500;
+    private int salary = 2000;
+    private double holidayTime = 3;
+    private int level = 3;
+
+    //constructor
+    public Manager(String newName, String newAddress, String newId, boolean statusS, boolean statusK,
+                   double holiday, int money, int moreMoney)
+    {
+        super( newName, newAddress,newId, statusS, statusK);
+
+        if(checkHoliday(holiday)) {holidayTime = holiday;}
+        if(checkSalary(money) ) {salary = money;}
+        if(moreMoney != 0){bonus = moreMoney;};
+    }
+
+//-------------------------------------------------------------------------------------------------
+    //overide the super getLevel method
+    @Override
+    public int getLevel()
+    {return level;}
+
+    //-------------------------------------------------------------------------------------------------
+
+    //set and get methods for holiday
+    public void setHoliday(double x)
+    {if(checkHoliday( x))
+        { holidayTime = x;}}
+
+    public double getHoliday()
+    {
+        return holidayTime;
+    }
+
+    //this method checks if the holiday time entered is valid for a manager
+    public boolean checkHoliday(double x)
+    { boolean valid = false;
+        if(x >= 3 && x <=5)
+        {
+            valid = true;
+        }
+        return valid;
+    }
+
+    //-------------------------------------------------------------------------------------------------
+   //set and get methods for salary
+    public void setSalary(int x)
+    { if(checkSalary(x))
+    {salary = x;}}
+
+    public int getSalary()
+    {return salary;}
+
+    //this methods checks if the salary entered is valid for a manager
+    public boolean checkSalary(int x)
+    { boolean valid = false;
+        if(x >= 5000 && x <=10000)
+        {
+            valid = true;
+        }
+        return valid;
+    }
+
+    //-------------------------------------------------------------------------------------------------
+    public void setBonus(int x)
+    {bonus = x;}
+    //-------------------------------------------------------------------------------------------------
+    public int getBonus()
+    {return bonus;}
+//-------------------------------------------------------------------------------------------------
+    //override the super display method. Displays information for a manager
+    @Override
+public String display() {
+
+    String married = " ";
+    String parent = " ";
+
+    if (getSpouse() == false) {married = "No";}
+    else {  married = "Yes";}
+
+    if (getKids() == false) {parent = "No";}
+    else {parent = "Yes";}
+
+    String full = " Employee Status: Manager \n Name: " + getName() + "\n ID: " + getId() + "\n Address: " + getAddress() +
+            "\n Salary: " + salary + "\n Holiday Time: " + holidayTime + " weeks " + "\n Bonus: " + bonus +
+            "\n Married: " + married + "\n Kids: " + parent;
+
+    return full;
+
+}
+
+
+
+}
